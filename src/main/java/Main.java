@@ -28,11 +28,9 @@ public class Main {
             return;
         }
 
-
         MusicBandManager manager = new MusicBandManager(args[0]);
         CommandInvoker invoker = new CommandInvoker();
         Scanner scanner = new Scanner(System.in);
-
 
         String command;
 
