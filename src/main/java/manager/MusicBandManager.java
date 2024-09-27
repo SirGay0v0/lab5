@@ -17,17 +17,15 @@ import java.util.LinkedList;
  * Класс для управления коллекцией музыкальных групп.
  */
 public class MusicBandManager {
-    private final LinkedList<MusicBand> bands;  // Коллекция музыкальных групп
-    private final LocalDateTime initializationDate;  // Дата инициализации коллекции
+    private final LinkedList<MusicBand> bands;
+    private final LocalDateTime initializationDate;
 
-    // Метод для генерации уникального id
     public long generateId() {
         // Если коллекция пуста, начнем с id 1
         if (bands.isEmpty()) {
             return 1L;
         }
 
-        // Найдем максимальный id в коллекции и прибавим 1
         return bands.stream()
                 .mapToLong(MusicBand::getId)
                 .max()
@@ -40,7 +38,7 @@ public class MusicBandManager {
      */
     public MusicBandManager() {
         this.bands = new LinkedList<>();
-        this.initializationDate = LocalDateTime.now();  // Устанавливаем текущую дату и время как дату инициализации
+        this.initializationDate = LocalDateTime.now();
     }
 
     /**
@@ -130,15 +128,13 @@ public class MusicBandManager {
     public void loadFromCsv(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
-            int lineNumber = 0; // Для отслеживания номера строки
+            int lineNumber = 0;
             while ((line = br.readLine()) != null) {
                 lineNumber++;
                 try {
-                    // Парсим строку и добавляем объект в коллекцию
                     MusicBand band = parseBandFromCsv(line);
                     bands.add(band);
                 } catch (Exception e) {
-                    // Логируем ошибку и продолжаем работу со следующей строкой
                     System.err.println("Ошибка при обработке строки " + lineNumber + ": " + e.getMessage());
                 }
             }

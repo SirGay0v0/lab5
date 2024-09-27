@@ -11,8 +11,8 @@ import java.util.Map;
  * Он хранит зарегистрированные команды и позволяет выполнять их по имени.
  */
 public class CommandInvoker {
-    private final Map<String, Command> commandMap = new HashMap<>();  // Карта команд
-    private final LinkedList<String> commandHistory = new LinkedList<>();  // История команд
+    private final Map<String, Command> commandMap = new HashMap<>();
+    private final LinkedList<String> commandHistory = new LinkedList<>();
 
     /**
      * Регистрация команды с именем.
@@ -33,7 +33,7 @@ public class CommandInvoker {
         Command command = commandMap.get(commandName);
         if (command != null) {
             command.execute();
-            addToHistory(commandName);  // Добавляем команду в историю
+            addToHistory(commandName);
         } else {
             System.out.println("Команда не найдена: " + commandName);
         }
@@ -48,9 +48,9 @@ public class CommandInvoker {
         // Максимальный размер истории
         int maxHistorySize = 5;
         if (commandHistory.size() == maxHistorySize) {
-            commandHistory.removeFirst();  // Удаляем старейшую команду
+            commandHistory.removeFirst();
         }
-        commandHistory.addLast(commandName);  // Добавляем новую команду в конец
+        commandHistory.addLast(commandName);
     }
 
     /**

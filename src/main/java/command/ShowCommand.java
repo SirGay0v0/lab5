@@ -29,7 +29,7 @@ public class ShowCommand implements Command {
         } else {
             System.out.println("Элементы коллекции:");
             for (MusicBand band : manager.getBands()) {
-                System.out.println(band); // Используется метод toString() класса MusicBand
+                System.out.println(band);
             }
         }
     }

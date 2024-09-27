@@ -13,7 +13,7 @@ public class MusicBand implements Comparable<MusicBand> {
     private MusicGenre genre; // Поле не может быть null
     private Studio studio; // Поле не может быть null
 
-    // Конструктор класса MusicBand
+
     public MusicBand(Long id, String name, Coordinates coordinates, LocalDateTime creationDate,
                      Integer numberOfParticipants, long singlesCount, MusicGenre genre, Studio studio) {
         this.id = id;
@@ -28,10 +28,6 @@ public class MusicBand implements Comparable<MusicBand> {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

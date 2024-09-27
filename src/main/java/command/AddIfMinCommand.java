@@ -32,7 +32,6 @@ public class AddIfMinCommand implements Command {
      */
     @Override
     public void execute() {
-        // Ввод нового элемента
         System.out.println("Добавление нового элемента, если его значение меньше наименьшего в коллекции...");
 
         String name = promptString("Введите название группы: ");
@@ -42,14 +41,11 @@ public class AddIfMinCommand implements Command {
         MusicGenre genre = promptEnum("Выберите жанр: ", MusicGenre.class);
         Studio studio = promptStudio();
 
-        // Генерация уникального id и текущей даты создания
-        long id = manager.generateId();  // Метод генерации уникального ID
+        long id = manager.generateId();
         LocalDateTime creationDate = LocalDateTime.now();
 
-        // Создаем новый объект MusicBand с полными аргументами
         MusicBand newBand = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
 
-        // Сравниваем новый элемент с минимальным элементом
         if (manager.getBands().isEmpty() || newBand.compareTo(manager.getMinElement()) < 0) {
             manager.addBand(newBand);
             System.out.println("Элемент успешно добавлен в коллекцию.");
@@ -59,6 +55,7 @@ public class AddIfMinCommand implements Command {
     }
 
     // Вспомогательные методы для ввода данных
+
     private String promptString(String message) {
         String input;
         do {

@@ -35,7 +35,6 @@ public class RemoveGreaterCommand implements Command {
     public void execute() {
         System.out.println("Удаление всех элементов, превышающих заданный элемент...");
 
-        // Запрашиваем у пользователя данные для нового элемента
         String name = promptString("Введите название группы: ");
         Coordinates coordinates = promptCoordinates();
         Integer numberOfParticipants = promptInteger("Введите количество участников (больше 0 или оставьте пустым): ", true);
@@ -43,14 +42,11 @@ public class RemoveGreaterCommand implements Command {
         MusicGenre genre = promptEnum("Выберите жанр: ", MusicGenre.class);
         Studio studio = promptStudio();
 
-        // Генерация уникального id и текущей даты создания
         long id = manager.generateId();
         LocalDateTime creationDate = LocalDateTime.now();
 
-        // Создаем новый объект MusicBand
         MusicBand bandToCompare = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
 
-        // Удаляем все элементы, которые больше, чем bandToCompare
         Iterator<MusicBand> iterator = manager.getBands().iterator();
         boolean anyRemoved = false;
         while (iterator.hasNext()) {

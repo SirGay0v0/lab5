@@ -35,7 +35,6 @@ public class AddCommand implements Command {
     public void execute() {
         System.out.println("Добавление нового элемента в коллекцию.");
 
-        // Ввод данных для создания объекта MusicBand
         String name = promptString("Введите название группы (не может быть пустым): ");
         Coordinates coordinates = promptCoordinates();
         Integer numberOfParticipants = promptInteger("Введите количество участников (больше 0 или оставьте пустым): ", true);
@@ -43,14 +42,11 @@ public class AddCommand implements Command {
         MusicGenre genre = promptEnum("Выберите жанр: ", MusicGenre.class);
         Studio studio = promptStudio();
 
-        // Генерация уникального id и текущей даты создания
         long id = manager.generateId();  // Метод генерации уникального ID
         LocalDateTime creationDate = LocalDateTime.now();
 
-        // Создаем новый объект MusicBand с полными аргументами
         MusicBand newBand = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
 
-        // Добавляем его в коллекцию
         manager.addBand(newBand);
         System.out.println("Элемент успешно добавлен в коллекцию.");
     }

@@ -37,14 +37,13 @@ public class UpdateCommand implements Command {
         try {
             long id = Long.parseLong(scanner.nextLine().trim());
 
-            // Находим элемент с указанным ID
             MusicBand band = manager.getBandById(id);
             if (band == null) {
                 System.out.println("Элемент с таким ID не найден.");
                 return;
             }
 
-            // Запрашиваем новые данные у пользователя
+
             System.out.println("Обновление элемента с ID: " + id);
 
             String name = promptString("Введите новое название группы: ");

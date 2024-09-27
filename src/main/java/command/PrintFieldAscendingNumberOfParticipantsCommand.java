@@ -32,8 +32,8 @@ public class PrintFieldAscendingNumberOfParticipantsCommand implements Command {
         }
 
         manager.getBands().stream()
-                .filter(band -> band.getNumberOfParticipants() != null)  // Учитываем только элементы с ненулевым числом участников
-                .sorted(Comparator.comparing(MusicBand::getNumberOfParticipants))  // Сортируем по числу участников
+                .filter(band -> band.getNumberOfParticipants() != null)
+                .sorted(Comparator.comparing(MusicBand::getNumberOfParticipants))
                 .forEach(band -> System.out.println("Number of participants: " + band.getNumberOfParticipants()));
     }
 }

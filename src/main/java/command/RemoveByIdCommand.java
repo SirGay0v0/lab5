@@ -28,7 +28,6 @@ public class RemoveByIdCommand implements Command {
         try {
             long id = Long.parseLong(scanner.nextLine().trim());
 
-            // Удаляем элемент с указанным ID
             boolean removed = manager.removeById(id);
 
             if (removed) {
