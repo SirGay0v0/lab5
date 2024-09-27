@@ -1,19 +1,36 @@
 package command;
 
 import manager.MusicBandManager;
+import model.MusicBand;
+
 /**
- * Класс для команды вывода всех элементов коллекции в строковом представлении.
- * Отображает каждый элемент коллекции в порядке добавления.
+ * Команда для вывода всех элементов коллекции в строковом представлении.
  */
 public class ShowCommand implements Command {
-    private MusicBandManager manager;
+    private final MusicBandManager manager;
 
+    /**
+     * Конструктор команды show.
+     *
+     * @param manager объект для управления коллекцией
+     */
     public ShowCommand(MusicBandManager manager) {
         this.manager = manager;
     }
 
+    /**
+     * Метод для выполнения команды show.
+     * Выводит все элементы коллекции в строковом представлении.
+     */
     @Override
     public void execute() {
-        manager.showCollection();
+        if (manager.getBands().isEmpty()) {
+            System.out.println("Коллекция пуста.");
+        } else {
+            System.out.println("Элементы коллекции:");
+            for (MusicBand band : manager.getBands()) {
+                System.out.println(band); // Используется метод toString() класса MusicBand
+            }
+        }
     }
 }

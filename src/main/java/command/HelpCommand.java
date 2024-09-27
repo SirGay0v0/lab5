@@ -1,4 +1,5 @@
 package command;
+
 /**
  * Класс для команды вывода справочной информации.
  * Отображает список всех доступных команд и краткое описание каждой из них.
@@ -7,22 +8,22 @@ public class HelpCommand implements Command {
 
     @Override
     public void execute() {
-        System.out.println("Доступные команды:");
-        System.out.println("help : вывести справку по доступным командам");
-        System.out.println("info : вывести информацию о коллекции");
-        System.out.println("history : вывести последние 5 команд");
-        System.out.println("show : вывести все элементы коллекции");
-        System.out.println("add : добавить новый элемент");
-        System.out.println("update id : обновить элемент по его id");
-        System.out.println("remove_by_id id : удалить элемент по его id");
-        System.out.println("clear : очистить коллекцию");
-        System.out.println("save : сохранить коллекцию в файл");
-        System.out.println("add_if_max : добавить новый элемент, если его значение превышает наибольший элемент");
-        System.out.println("remove_lower : удалить все элементы, которые меньше заданного");
-        System.out.println("print_ascending : вывести элементы в порядке возрастания");
-        System.out.println("print_unique_front_man : вывести уникальные значения поля frontMan");
-        System.out.println("print_field_descending_genre : вывести значения поля genre в порядке убывания");
-        System.out.println("execute_script file_name : считать и исполнить скрипт из указанного файла");
-        System.out.println("exit : завершить программу");
+        System.out.println("Доступные команды:\n" +
+                "help : вывести справку по доступным командам\n" +
+                "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
+                "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
+                "add {element} : добавить новый элемент в коллекцию\n" +
+                "update id {element} : обновить значение элемента коллекции, id которого равен заданному\n" +
+                "remove_by_id id : удалить элемент из коллекции по его id\n" +
+                "clear : очистить коллекцию\n" +
+                "save : сохранить коллекцию в файл\n" +
+                "execute_script file_name : считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде, в котором их вводит пользователь в интерактивном режиме.\n" +
+                "exit : завершить программу (без сохранения в файл)\n" +
+                "remove_head : вывести первый элемент коллекции и удалить его\n" +
+                "add_if_min {element} : добавить новый элемент в коллекцию, если его значение меньше, чем у наименьшего элемента этой коллекции\n" +
+                "remove_greater {element} : удалить из коллекции все элементы, превышающие заданный\n" +
+                "max_by_coordinates : вывести любой объект из коллекции, значение поля coordinates которого является максимальным\n" +
+                "filter_contains_name name : вывести элементы, значение поля name которых содержит заданную подстроку\n" +
+                "print_field_ascending_number_of_participants : вывести значения поля numberOfParticipants всех элементов в порядке возрастания");
     }
 }

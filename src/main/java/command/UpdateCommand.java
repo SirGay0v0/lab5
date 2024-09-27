@@ -1,90 +1,111 @@
 package command;
 
 import manager.MusicBandManager;
-import model.Color;
 import model.Coordinates;
-import model.Country;
-import model.Location;
 import model.MusicBand;
 import model.MusicGenre;
-import model.Person;
+import model.Studio;
 
 import java.util.Scanner;
 
+
 /**
- * Класс для команды обновления элемента коллекции по его id.
- * Пользователь вводит id элемента и новые данные для обновления.
+ * Команда для обновления значения элемента коллекции по id.
  */
 public class UpdateCommand implements Command {
-    private MusicBandManager manager;
-    private long id;
-    private Scanner scanner;
+    private final MusicBandManager manager;
+    private final Scanner scanner;
 
-    public UpdateCommand(MusicBandManager manager, long id, Scanner scanner) {
+    /**
+     * Конструктор команды update.
+     *
+     * @param manager объект для управления коллекцией
+     * @param scanner объект для считывания ввода
+     */
+    public UpdateCommand(MusicBandManager manager, Scanner scanner) {
         this.manager = manager;
-        this.id = id;
         this.scanner = scanner;
     }
 
+    /**
+     * Метод для выполнения команды update.
+     * Обновляет элемент коллекции с указанным id.
+     */
     @Override
     public void execute() {
+        System.out.print("Введите ID элемента для обновления: ");
+        try {
+            long id = Long.parseLong(scanner.nextLine().trim());
 
-        MusicBand band = manager.findById(id);
-        if (band == null) {
-            System.out.println("Элемент с id " + id + " не найден.");
-            return;
+            // Находим элемент с указанным ID
+            MusicBand band = manager.getBandById(id);
+            if (band == null) {
+                System.out.println("Элемент с таким ID не найден.");
+                return;
+            }
+
+            // Запрашиваем новые данные у пользователя
+            System.out.println("Обновление элемента с ID: " + id);
+
+            String name = promptString("Введите новое название группы: ");
+            Coordinates coordinates = promptCoordinates();
+            Integer numberOfParticipants = promptInteger("Введите новое количество участников (или оставьте пустым): ", true);
+            long singlesCount = promptLong("Введите новое количество синглов (больше 0): ", 1, Long.MAX_VALUE);
+            MusicGenre genre = promptEnum("Выберите новый жанр: ", MusicGenre.class);
+            Studio studio = promptStudio();
+
+            // Обновляем поля объекта
+            band.setName(name);
+            band.setCoordinates(coordinates);
+            band.setNumberOfParticipants(numberOfParticipants);
+            band.setSinglesCount(singlesCount);
+            band.setGenre(genre);
+            band.setStudio(studio);
+
+            System.out.println("Элемент успешно обновлен.");
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка: некорректный формат ID.");
         }
-
-        String newName = promptString("Введите новое имя группы (текущее: " + band.getName() + "):", band.getName());
-
-        Coordinates coordinates = band.getCoordinates();
-        Float newX = promptFloat("Введите новые координаты (x) (текущее значение: " + coordinates.getX() + "):", coordinates.getX());
-        Long newY = promptLong("Введите новые координаты (y) (текущее значение: " + coordinates.getY() + "):", coordinates.getY(), -490L, Long.MAX_VALUE);
-
-        Coordinates newCoordinates = new Coordinates(newX, newY);
-
-        long newParticipants = promptLong("Введите новое количество участников (текущее: " + band.getNumberOfParticipants() + "):", band.getNumberOfParticipants(), 1, Long.MAX_VALUE);
-
-        MusicGenre newGenre = promptEnum("Текущий жанр: " + (band.getGenre() == null ? "не задан" : band.getGenre()), MusicGenre.class, band.getGenre());
-
-        Person frontMan = band.getFrontMan();
-        String newFrontManName = promptString("Введите новое имя фронтмена (текущее: " + frontMan.getName() + "):", frontMan.getName());
-        Integer newHeight = promptInteger("Введите новый рост фронтмена (текущее значение: " + frontMan.getHeight() + "):", frontMan.getHeight(), 1, Integer.MAX_VALUE);
-
-        Color newHairColor = promptEnum("Текущий цвет волос: " + frontMan.getHairColor(), Color.class, frontMan.getHairColor());
-
-        Country newNationality = promptEnum("Текущая национальность: " + frontMan.getNationality(), Country.class, frontMan.getNationality());
-
-        Location location = frontMan.getLocation();
-        Float locX = promptFloat("Введите новое местоположение фронтмена (x) (текущее значение: " + location.getX() + "):", location.getX());
-        Float locY = promptFloat("Введите новое местоположение фронтмена (y) (текущее значение: " + location.getY() + "):", location.getY());
-        Float locZ = promptFloat("Введите новое местоположение фронтмена (z) (текущее значение: " + location.getZ() + "):", location.getZ());
-        String locName = promptString("Введите новое название местоположения (текущее значение: " + location.getName() + "):", location.getName());
-
-        Location newLocation = new Location(locX, locY, locZ, locName);
-
-        Person newFrontMan = new Person(newFrontManName, newHeight, newHairColor, newNationality, newLocation);
-
-        MusicBand updatedBand = new MusicBand(band.getId(), newName, newCoordinates, band.getCreationDate(), newParticipants, newGenre, newFrontMan);
-
-        manager.updateElement(id, updatedBand);
     }
 
-    private String promptString(String message, String currentValue) {
-        System.out.println(message);
-        String input = scanner.nextLine().trim();
-        return input.isEmpty() ? currentValue : input;
+    // Вспомогательные методы для ввода данных
+
+    /**
+     * Ввод строки с проверкой на пустоту.
+     */
+    private String promptString(String message) {
+        String input;
+        do {
+            System.out.print(message);
+            input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.out.println("Поле не может быть пустым.");
+            }
+        } while (input.isEmpty());
+        return input;
     }
 
-    private Long promptLong(String message, Long currentValue, long min, long max) {
+    /**
+     * Ввод координат (объект Coordinates).
+     */
+    private Coordinates promptCoordinates() {
+        System.out.println("Введите координаты:");
+        Double x = promptDouble("Введите координату X (не может быть null): ");
+        Long y = promptLong("Введите координату Y (не может быть null): ", Long.MIN_VALUE, Long.MAX_VALUE);
+        return new Coordinates(x, y);
+    }
+
+    /**
+     * Ввод целого числа с проверкой на диапазон.
+     */
+    private long promptLong(String message, long min, long max) {
+        long value;
         while (true) {
             try {
-                System.out.println(message);
-                String input = scanner.nextLine().trim();
-                if (input.isEmpty()) return currentValue;
-                long value = Long.parseLong(input);
+                System.out.print(message);
+                value = Long.parseLong(scanner.nextLine().trim());
                 if (value < min || value > max) {
-                    System.out.println("Значение должно быть в пределах от " + min + " до " + max + ".");
+                    System.out.println("Значение должно быть в диапазоне от " + min + " до " + max + ".");
                 } else {
                     return value;
                 }
@@ -94,30 +115,22 @@ public class UpdateCommand implements Command {
         }
     }
 
-    private Float promptFloat(String message, Float currentValue) {
+    /**
+     * Ввод целого числа с возможностью оставить поле пустым.
+     */
+    private Integer promptInteger(String message, boolean allowNull) {
         while (true) {
-            try {
-                System.out.println(message);
-                String input = scanner.nextLine().trim();
-                if (input.isEmpty()) return currentValue;
-                return Float.parseFloat(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Ошибка: введите корректное число.");
+            System.out.print(message);
+            String input = scanner.nextLine().trim();
+            if (allowNull && input.isEmpty()) {
+                return null;
             }
-        }
-    }
-
-    private Integer promptInteger(String message, Integer currentValue, int min, int max) {
-        while (true) {
             try {
-                System.out.println(message);
-                String input = scanner.nextLine().trim();
-                if (input.isEmpty()) return currentValue;
                 int value = Integer.parseInt(input);
-                if (value < min || value > max) {
-                    System.out.println("Значение должно быть в пределах от " + min + " до " + max + ".");
-                } else {
+                if (value > 0) {
                     return value;
+                } else {
+                    System.out.println("Значение должно быть больше 0.");
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Ошибка: введите корректное число.");
@@ -125,24 +138,45 @@ public class UpdateCommand implements Command {
         }
     }
 
-    private <T extends Enum<T>> T promptEnum(String message, Class<T> enumClass, T currentValue) {
+    /**
+     * Ввод студии (объект Studio).
+     */
+    private Studio promptStudio() {
+        System.out.println("Введите информацию о студии:");
+        String name = promptString("Введите название студии (может быть пустым): ");
+        String address = promptString("Введите адрес студии (не может быть пустым): ");
+        return new Studio(name, address);
+    }
+
+    /**
+     * Ввод перечисляемого типа с проверкой корректности.
+     */
+    private <T extends Enum<T>> T promptEnum(String message, Class<T> enumClass) {
         while (true) {
             System.out.println(message);
-
-            T[] enumConstants = enumClass.getEnumConstants();
-            System.out.println("Доступные значения: ");
-            for (T constant : enumConstants) {
+            for (T constant : enumClass.getEnumConstants()) {
                 System.out.print(constant.name() + " ");
             }
             System.out.println();
-
-
             String input = scanner.nextLine().trim();
-            if (input.isEmpty()) return currentValue;
             try {
                 return Enum.valueOf(enumClass, input);
             } catch (IllegalArgumentException e) {
                 System.out.println("Ошибка: введите одно из предложенных значений.");
+            }
+        }
+    }
+
+    /**
+     * Ввод значения с плавающей точкой (Double).
+     */
+    private Double promptDouble(String message) {
+        while (true) {
+            System.out.print(message);
+            try {
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Ошибка: введите корректное число.");
             }
         }
     }

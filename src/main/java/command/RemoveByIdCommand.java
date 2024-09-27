@@ -3,39 +3,41 @@ package command;
 import manager.MusicBandManager;
 
 import java.util.Scanner;
-/**
- * Класс для команды удаления элемента коллекции по его id.
- * Пользователь вводит id элемента, который нужно удалить.
- */
 public class RemoveByIdCommand implements Command {
-    private MusicBandManager manager;
-    private Scanner scanner;
+    private final MusicBandManager manager;
+    private final Scanner scanner;
 
+    /**
+     * Конструктор команды remove_by_id.
+     *
+     * @param manager объект для управления коллекцией
+     * @param scanner объект для считывания ввода
+     */
     public RemoveByIdCommand(MusicBandManager manager, Scanner scanner) {
         this.manager = manager;
         this.scanner = scanner;
     }
 
+    /**
+     * Метод для выполнения команды remove_by_id.
+     * Удаляет элемент коллекции с указанным id.
+     */
     @Override
     public void execute() {
-        System.out.print("Введите id элемента, который нужно удалить: ");
-        long id = promptLong();
+        System.out.print("Введите ID элемента для удаления: ");
+        try {
+            long id = Long.parseLong(scanner.nextLine().trim());
 
-        boolean success = manager.removeById(id);
-        if (success) {
-            System.out.println("Элемент с id " + id + " был успешно удалён.");
-        } else {
-            System.out.println("Элемент с id " + id + " не найден.");
-        }
-    }
+            // Удаляем элемент с указанным ID
+            boolean removed = manager.removeById(id);
 
-    private long promptLong() {
-        while (true) {
-            try {
-                return Long.parseLong(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Ошибка: введите корректное число.");
+            if (removed) {
+                System.out.println("Элемент с ID " + id + " успешно удален.");
+            } else {
+                System.out.println("Элемент с таким ID не найден.");
             }
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка: некорректный формат ID.");
         }
     }
 }

@@ -1,19 +1,33 @@
 package command;
 
 import manager.MusicBandManager;
+
 /**
- * Класс для команды очистки коллекции.
- * Удаляет все элементы из коллекции.
+ * Команда для очистки коллекции.
  */
 public class ClearCommand implements Command {
-    private MusicBandManager manager;
+    private final MusicBandManager manager;
 
+    /**
+     * Конструктор команды clear.
+     *
+     * @param manager объект для управления коллекцией
+     */
     public ClearCommand(MusicBandManager manager) {
         this.manager = manager;
     }
 
+    /**
+     * Метод для выполнения команды clear.
+     * Очищает коллекцию, удаляя все элементы.
+     */
     @Override
     public void execute() {
-        manager.clearCollection();
+        if (manager.getBands().isEmpty()) {
+            System.out.println("Коллекция уже пуста.");
+        } else {
+            manager.clear();
+            System.out.println("Коллекция успешно очищена.");
+        }
     }
 }

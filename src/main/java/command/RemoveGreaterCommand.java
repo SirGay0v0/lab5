@@ -7,36 +7,36 @@ import model.MusicGenre;
 import model.Studio;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * Класс для команды добавления нового музыкального элемента в коллекцию.
- * Пользователь вводит данные для нового элемента, которые затем добавляются в коллекцию.
+ * Команда для удаления всех элементов коллекции, превышающих заданный элемент.
  */
-public class AddCommand implements Command {
-    private MusicBandManager manager;
-    private Scanner scanner;
+public class RemoveGreaterCommand implements Command {
+    private final MusicBandManager manager;
+    private final Scanner scanner;
 
     /**
-     * Конструктор для команды добавления.
+     * Конструктор команды remove_greater.
      *
      * @param manager объект для управления коллекцией
      * @param scanner объект для считывания ввода
      */
-    public AddCommand(MusicBandManager manager, Scanner scanner) {
+    public RemoveGreaterCommand(MusicBandManager manager, Scanner scanner) {
         this.manager = manager;
         this.scanner = scanner;
     }
 
     /**
-     * Метод для выполнения команды добавления.
+     * Метод для выполнения команды remove_greater.
+     * Удаляет все элементы коллекции, которые превышают заданный элемент.
      */
     public void execute() {
-        System.out.println("Добавление нового элемента в коллекцию.");
+        System.out.println("Удаление всех элементов, превышающих заданный элемент...");
 
-        // Ввод данных для создания объекта MusicBand
-        String name = promptString("Введите название группы (не может быть пустым): ");
+        // Запрашиваем у пользователя данные для нового элемента
+        String name = promptString("Введите название группы: ");
         Coordinates coordinates = promptCoordinates();
         Integer numberOfParticipants = promptInteger("Введите количество участников (больше 0 или оставьте пустым): ", true);
         long singlesCount = promptLong("Введите количество синглов (больше 0): ", 1, Long.MAX_VALUE);
@@ -44,20 +44,32 @@ public class AddCommand implements Command {
         Studio studio = promptStudio();
 
         // Генерация уникального id и текущей даты создания
-        long id = manager.generateId();  // Метод генерации уникального ID
+        long id = manager.generateId();
         LocalDateTime creationDate = LocalDateTime.now();
 
-        // Создаем новый объект MusicBand с полными аргументами
-        MusicBand newBand = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
+        // Создаем новый объект MusicBand
+        MusicBand bandToCompare = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
 
-        // Добавляем его в коллекцию
-        manager.addBand(newBand);
-        System.out.println("Элемент успешно добавлен в коллекцию.");
+        // Удаляем все элементы, которые больше, чем bandToCompare
+        Iterator<MusicBand> iterator = manager.getBands().iterator();
+        boolean anyRemoved = false;
+        while (iterator.hasNext()) {
+            MusicBand band = iterator.next();
+            if (band.compareTo(bandToCompare) > 0) {
+                iterator.remove();
+                anyRemoved = true;
+            }
+        }
+
+        if (anyRemoved) {
+            System.out.println("Элементы были удалены.");
+        } else {
+            System.out.println("Не найдено элементов, превышающих заданный.");
+        }
     }
 
-    /**
-     * Ввод строки с проверкой на пустоту.
-     */
+    // Вспомогательные методы для ввода данных
+
     private String promptString(String message) {
         String input;
         do {
@@ -70,9 +82,13 @@ public class AddCommand implements Command {
         return input;
     }
 
-    /**
-     * Ввод целого числа с проверкой на диапазон.
-     */
+    private Coordinates promptCoordinates() {
+        System.out.println("Введите координаты:");
+        Double x = promptDouble("Введите координату X (не может быть null): ");
+        Long y = promptLong("Введите координату Y (не может быть null): ", Long.MIN_VALUE, Long.MAX_VALUE);
+        return new Coordinates(x, y);
+    }
+
     private long promptLong(String message, long min, long max) {
         long value;
         while (true) {
@@ -90,9 +106,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод целого числа с возможностью оставить поле пустым.
-     */
     private Integer promptInteger(String message, boolean allowNull) {
         while (true) {
             System.out.print(message);
@@ -113,19 +126,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод объекта Coordinates.
-     */
-    private Coordinates promptCoordinates() {
-        System.out.println("Введите координаты:");
-        Double x = promptDouble("Введите координату X (не может быть null): ");
-        Long y = promptLong("Введите координату Y (не может быть null): ", Long.MIN_VALUE, Long.MAX_VALUE);
-        return new Coordinates(x, y);
-    }
-
-    /**
-     * Ввод объекта Studio.
-     */
     private Studio promptStudio() {
         System.out.println("Введите информацию о студии:");
         String name = promptString("Введите название студии (может быть пустым): ");
@@ -133,9 +133,6 @@ public class AddCommand implements Command {
         return new Studio(name, address);
     }
 
-    /**
-     * Ввод перечисляемого типа с проверкой корректности.
-     */
     private <T extends Enum<T>> T promptEnum(String message, Class<T> enumClass) {
         while (true) {
             System.out.println(message);
@@ -152,9 +149,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод значения с плавающей точкой (Double).
-     */
     private Double promptDouble(String message) {
         while (true) {
             System.out.print(message);
@@ -166,4 +160,3 @@ public class AddCommand implements Command {
         }
     }
 }
-

@@ -2,33 +2,69 @@ package invoker;
 
 import command.Command;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+/**
+ * Класс CommandInvoker управляет выполнением команд.
+ * Он хранит зарегистрированные команды и позволяет выполнять их по имени.
+ */
 public class CommandInvoker {
-    private final LinkedList<Command> commandHistory = new LinkedList<>();  
-    private final int maxHistorySize = 5;  
+    private final Map<String, Command> commandMap = new HashMap<>();  // Карта команд
+    private final LinkedList<String> commandHistory = new LinkedList<>();  // История команд
 
-    public void executeCommand(Command command) {
-        command.execute();
-        addToHistory(command);
+    /**
+     * Регистрация команды с именем.
+     *
+     * @param commandName имя команды
+     * @param command объект команды
+     */
+    public void register(String commandName, Command command) {
+        commandMap.put(commandName, command);
     }
 
-    private void addToHistory(Command command) {
-        if (commandHistory.size() == maxHistorySize) {
-            commandHistory.removeFirst();  
+    /**
+     * Выполняет команду по её имени.
+     *
+     * @param commandName строка, содержащая имя команды
+     */
+    public void executeCommand(String commandName) {
+        Command command = commandMap.get(commandName);
+        if (command != null) {
+            command.execute();
+            addToHistory(commandName);  // Добавляем команду в историю
+        } else {
+            System.out.println("Команда не найдена: " + commandName);
         }
-        commandHistory.addLast(command);  
     }
 
+    /**
+     * Добавляет команду в историю с ограничением на количество элементов.
+     *
+     * @param commandName имя выполненной команды
+     */
+    private void addToHistory(String commandName) {
+        // Максимальный размер истории
+        int maxHistorySize = 5;
+        if (commandHistory.size() == maxHistorySize) {
+            commandHistory.removeFirst();  // Удаляем старейшую команду
+        }
+        commandHistory.addLast(commandName);  // Добавляем новую команду в конец
+    }
+
+    /**
+     * Выводит последние выполненные команды (максимум 5).
+     */
     public void showHistory() {
         if (commandHistory.isEmpty()) {
             System.out.println("История команд пуста.");
             return;
         }
 
-        System.out.println("Последние " + commandHistory.size() + " команд:");
-        for (Command cmd : commandHistory) {
-            System.out.println(cmd.getClass().getSimpleName());  
+        System.out.println("Последние выполненные команды:");
+        for (String cmd : commandHistory) {
+            System.out.println(cmd);
         }
     }
 }

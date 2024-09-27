@@ -7,36 +7,35 @@ import model.MusicGenre;
 import model.Studio;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-
 /**
- * Класс для команды добавления нового музыкального элемента в коллекцию.
- * Пользователь вводит данные для нового элемента, которые затем добавляются в коллекцию.
+ * Команда для добавления нового элемента в коллекцию, если его значение меньше наименьшего элемента коллекции.
  */
-public class AddCommand implements Command {
-    private MusicBandManager manager;
-    private Scanner scanner;
+public class AddIfMinCommand implements Command {
+    private final MusicBandManager manager;
+    private final Scanner scanner;
 
     /**
-     * Конструктор для команды добавления.
+     * Конструктор команды add_if_min.
      *
      * @param manager объект для управления коллекцией
      * @param scanner объект для считывания ввода
      */
-    public AddCommand(MusicBandManager manager, Scanner scanner) {
+    public AddIfMinCommand(MusicBandManager manager, Scanner scanner) {
         this.manager = manager;
         this.scanner = scanner;
     }
 
     /**
-     * Метод для выполнения команды добавления.
+     * Метод для выполнения команды add_if_min.
+     * Добавляет новый элемент в коллекцию, если его значение меньше наименьшего элемента.
      */
+    @Override
     public void execute() {
-        System.out.println("Добавление нового элемента в коллекцию.");
+        // Ввод нового элемента
+        System.out.println("Добавление нового элемента, если его значение меньше наименьшего в коллекции...");
 
-        // Ввод данных для создания объекта MusicBand
-        String name = promptString("Введите название группы (не может быть пустым): ");
+        String name = promptString("Введите название группы: ");
         Coordinates coordinates = promptCoordinates();
         Integer numberOfParticipants = promptInteger("Введите количество участников (больше 0 или оставьте пустым): ", true);
         long singlesCount = promptLong("Введите количество синглов (больше 0): ", 1, Long.MAX_VALUE);
@@ -50,14 +49,16 @@ public class AddCommand implements Command {
         // Создаем новый объект MusicBand с полными аргументами
         MusicBand newBand = new MusicBand(id, name, coordinates, creationDate, numberOfParticipants, singlesCount, genre, studio);
 
-        // Добавляем его в коллекцию
-        manager.addBand(newBand);
-        System.out.println("Элемент успешно добавлен в коллекцию.");
+        // Сравниваем новый элемент с минимальным элементом
+        if (manager.getBands().isEmpty() || newBand.compareTo(manager.getMinElement()) < 0) {
+            manager.addBand(newBand);
+            System.out.println("Элемент успешно добавлен в коллекцию.");
+        } else {
+            System.out.println("Элемент не добавлен, так как он не меньше наименьшего элемента коллекции.");
+        }
     }
 
-    /**
-     * Ввод строки с проверкой на пустоту.
-     */
+    // Вспомогательные методы для ввода данных
     private String promptString(String message) {
         String input;
         do {
@@ -70,9 +71,13 @@ public class AddCommand implements Command {
         return input;
     }
 
-    /**
-     * Ввод целого числа с проверкой на диапазон.
-     */
+    private Coordinates promptCoordinates() {
+        System.out.println("Введите координаты:");
+        Double x = promptDouble("Введите координату X (не может быть null): ");
+        Long y = promptLong("Введите координату Y (не может быть null): ", Long.MIN_VALUE, Long.MAX_VALUE);
+        return new Coordinates(x, y);
+    }
+
     private long promptLong(String message, long min, long max) {
         long value;
         while (true) {
@@ -90,9 +95,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод целого числа с возможностью оставить поле пустым.
-     */
     private Integer promptInteger(String message, boolean allowNull) {
         while (true) {
             System.out.print(message);
@@ -113,19 +115,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод объекта Coordinates.
-     */
-    private Coordinates promptCoordinates() {
-        System.out.println("Введите координаты:");
-        Double x = promptDouble("Введите координату X (не может быть null): ");
-        Long y = promptLong("Введите координату Y (не может быть null): ", Long.MIN_VALUE, Long.MAX_VALUE);
-        return new Coordinates(x, y);
-    }
-
-    /**
-     * Ввод объекта Studio.
-     */
     private Studio promptStudio() {
         System.out.println("Введите информацию о студии:");
         String name = promptString("Введите название студии (может быть пустым): ");
@@ -133,9 +122,6 @@ public class AddCommand implements Command {
         return new Studio(name, address);
     }
 
-    /**
-     * Ввод перечисляемого типа с проверкой корректности.
-     */
     private <T extends Enum<T>> T promptEnum(String message, Class<T> enumClass) {
         while (true) {
             System.out.println(message);
@@ -152,9 +138,6 @@ public class AddCommand implements Command {
         }
     }
 
-    /**
-     * Ввод значения с плавающей точкой (Double).
-     */
     private Double promptDouble(String message) {
         while (true) {
             System.out.print(message);
@@ -166,4 +149,3 @@ public class AddCommand implements Command {
         }
     }
 }
-

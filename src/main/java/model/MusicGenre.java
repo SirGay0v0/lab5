@@ -1,8 +1,10 @@
 package model;
 
 public enum MusicGenre {
-    PSYCHEDELIC_ROCK,
+    ROCK,
+    PSYCHEDELIC_CLOUD_RAP,
     POP,
-    BRIT_POP
+    POST_ROCK,
+    PUNK_ROCK;
 }
 
