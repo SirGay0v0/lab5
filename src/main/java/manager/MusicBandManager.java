@@ -109,7 +109,11 @@ public class MusicBandManager {
                 .orElse(null);
     }
 
-    // Метод для поиска музыкальной группы по id
+    /**
+     * Возвращает элемент в коллекции с заданным ID.
+     *
+     * @return Элемент с ID равным заданному
+     */
     public MusicBand getBandById(long id) {
         return bands.stream()
                 .filter(band -> band.getId() == id)
@@ -123,13 +127,20 @@ public class MusicBandManager {
      * @param filePath путь к файлу для загрузки
      * @throws IOException если произошла ошибка при чтении из файла
      */
-    // Метод для загрузки данных из файла CSV
     public void loadFromCsv(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
+            int lineNumber = 0; // Для отслеживания номера строки
             while ((line = br.readLine()) != null) {
-                MusicBand band = parseBandFromCsv(line);
-                bands.add(band);
+                lineNumber++;
+                try {
+                    // Парсим строку и добавляем объект в коллекцию
+                    MusicBand band = parseBandFromCsv(line);
+                    bands.add(band);
+                } catch (Exception e) {
+                    // Логируем ошибку и продолжаем работу со следующей строкой
+                    System.err.println("Ошибка при обработке строки " + lineNumber + ": " + e.getMessage());
+                }
             }
         }
     }
@@ -148,7 +159,6 @@ public class MusicBandManager {
         Long y = Long.parseLong(fields[3]);
         Coordinates coordinates = new Coordinates(x, y);
 
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         LocalDateTime creationDate = LocalDateTime.parse(fields[4]);
 
         Integer numberOfParticipants = fields[5].isEmpty() ? null : Integer.parseInt(fields[5]);
