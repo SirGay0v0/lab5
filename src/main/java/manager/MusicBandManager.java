@@ -9,15 +9,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Класс для управления коллекцией музыкальных групп.
  */
 public class MusicBandManager {
-    private final LinkedList<MusicBand> bands;
+    private final List<MusicBand> bands;
     private final LocalDateTime initializationDate;
 
     public long generateId() {
@@ -46,7 +46,7 @@ public class MusicBandManager {
      *
      * @return коллекция музыкальных групп
      */
-    public LinkedList<MusicBand> getBands() {
+    public List<MusicBand> getBands() {
         return bands;
     }
 

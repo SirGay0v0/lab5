@@ -19,6 +19,7 @@ import invoker.CommandInvoker;
 import manager.MusicBandManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -28,7 +29,7 @@ public class Main {
     public static void main(String[] args) {
         if (args.length < 1) {
             System.out.println("Ошибка: не указан файл для загрузки данных.");
-            System.out.println("Использование: java -jar main.jar <file.csv>");
+            System.out.println("Использование: java -jar Main.jar <file.csv>");
             return;
         }
 
@@ -36,7 +37,13 @@ public class Main {
         File file = new File(filePath);
 
         if (!file.exists() || !file.isFile()) {
-            System.out.println("Ошибка: файл не найден или указан неверный путь.");
+            System.out.println("Ошибка: файл не найден или указан неверный путь. Будет создан новый файл " +
+                    "с соответствующим именем");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
